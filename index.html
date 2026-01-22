@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BowlGuide - Laser Bowling Assistant</title>
+    <title>TrueAxis Bowling</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,193 +15,49 @@
         <!-- Welcome Screen -->
         <div class="screen welcome-screen active" id="welcomeScreen">
             <div class="welcome-content">
-                <div class="welcome-illustration-minimal">
-                    <div class="pin-icon">
-                        <svg viewBox="0 0 100 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <ellipse cx="50" cy="170" rx="30" ry="8" fill="rgba(255,255,255,0.1)"/>
-                            <path d="M35 160 C35 140, 25 120, 25 90 C25 60, 35 50, 50 45 C65 50, 75 60, 75 90 C75 120, 65 140, 65 160 Z" fill="white"/>
-                            <ellipse cx="50" cy="35" rx="20" ry="20" fill="white"/>
-                            <ellipse cx="50" cy="35" rx="12" ry="12" fill="#ef4444"/>
-                            <path d="M35 160 L65 160 C65 165, 60 168, 50 168 C40 168, 35 165, 35 160 Z" fill="#f5f5f5"/>
-                        </svg>
-                    </div>
-                    <div class="laser-beam"></div>
-                    <div class="target-ring"></div>
+                <div class="logo-container">
+                    <img src="image.png" alt="TrueAxis Bowling" class="logo">
                 </div>
-                <h1 class="welcome-title">Bowl<span>Guide</span></h1>
-                <p class="welcome-subtitle">Precision laser guidance for the perfect strike every time.</p>
+                <h1 class="welcome-title">TrueAxis Bowling</h1>
+                <p class="welcome-subtitle">Track your scores. Improve your game.</p>
                 <button class="btn-primary" onclick="showScreen('mainScreen')">
                     <span>Get Started</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
-            </div>
-            <div class="welcome-dots">
-                <span class="dot active"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
             </div>
         </div>
 
         <!-- Main Screen -->
         <div class="screen main-screen" id="mainScreen">
             <header class="main-header">
-                <h1>Bowl<span>Guide</span></h1>
-                <div class="header-actions">
-                    <button class="icon-btn" onclick="showScreen('settingsScreen')">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <div class="profile-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
+                <h1>TrueAxis</h1>
+                <button class="icon-btn" onclick="showScreen('settingsScreen')">
+                    <i class="fas fa-cog"></i>
+                </button>
             </header>
 
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search guides, techniques..." oninput="handleSearch(this.value)" onfocus="showSearchResults()" onblur="hideSearchResults()">
-                </div>
-                <button class="search-btn">
-                    <i class="fas fa-sliders-h"></i>
-                </button>
-
-                <!-- Search Results Dropdown -->
-                <div class="search-results" id="searchResults">
-                    <div class="search-category">
-                        <span class="category-label">Techniques</span>
-                        <div class="search-item" data-type="technique">
-                            <div class="search-item-icon purple"><i class="fas fa-bullseye"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Strike Shot Guide</span>
-                                <span class="search-item-desc">Perfect pocket targeting</span>
-                            </div>
-                        </div>
-                        <div class="search-item" data-type="technique">
-                            <div class="search-item-icon pink"><i class="fas fa-bowling-ball"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Spare Conversion</span>
-                                <span class="search-item-desc">Pick up any spare</span>
-                            </div>
-                        </div>
-                        <div class="search-item" data-type="technique">
-                            <div class="search-item-icon green"><i class="fas fa-sync-alt"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Hook Shot Basics</span>
-                                <span class="search-item-desc">Master the curve</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-category">
-                        <span class="category-label">Resources</span>
-                        <div class="search-item" data-type="resource">
-                            <div class="search-item-icon orange"><i class="fas fa-book"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Lane Oil Patterns</span>
-                                <span class="search-item-desc">Understanding lane conditions</span>
-                            </div>
-                        </div>
-                        <div class="search-item" data-type="resource">
-                            <div class="search-item-icon blue"><i class="fas fa-video"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Video Tutorials</span>
-                                <span class="search-item-desc">Step-by-step guides</span>
-                            </div>
-                        </div>
-                        <div class="search-item" data-type="resource">
-                            <div class="search-item-icon teal"><i class="fas fa-calculator"></i></div>
-                            <div class="search-item-info">
-                                <span class="search-item-title">Angle Calculator</span>
-                                <span class="search-item-desc">Find your perfect angle</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-no-results" id="noResults" style="display: none;">
-                        <i class="fas fa-search"></i>
-                        <span>No results found</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="quick-tags">
-                <button class="tag tag-strike active">
-                    <i class="fas fa-crosshairs"></i>
-                    <span>Strike</span>
-                </button>
-                <button class="tag tag-spare">
-                    <i class="fas fa-adjust"></i>
-                    <span>Spare</span>
-                </button>
-                <button class="tag tag-curve">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Curve</span>
-                </button>
-                <button class="tag tag-custom">
-                    <i class="fas fa-ruler"></i>
-                    <span>Custom</span>
-                </button>
-            </div>
-
             <section class="section">
                 <div class="section-header">
-                    <h2 class="section-guide"><i class="fas fa-crosshairs"></i>Quick Guide</h2>
-                    <a href="#" class="see-all">See all</a>
-                </div>
-                <div class="guide-cards">
-                    <div class="guide-card strike-card" onclick="showScreen('laserScreen')">
-                        <div class="card-bg"></div>
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
-                            <h3>Strike Shot</h3>
-                            <p>Pocket aim guide</p>
-                        </div>
-                    </div>
-                    <div class="guide-card spare-card" onclick="showScreen('laserScreen')">
-                        <div class="card-bg"></div>
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-bowling-ball"></i>
-                            </div>
-                            <h3>Spare Pick</h3>
-                            <p>Pin targeting</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-stats"><i class="fas fa-chart-line"></i>Your Stats</h2>
-                    <a href="#" class="see-all">View history</a>
+                    <h2>Your Stats</h2>
                 </div>
                 <div class="stats-card">
                     <div class="stat-item">
-                        <div class="stat-icon strike-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
                         <div class="stat-info">
-                            <span class="stat-value">78%</span>
-                            <span class="stat-label">Strike Rate</span>
+                            <span class="stat-value" id="avgScore">--</span>
+                            <span class="stat-label">Avg Score</span>
                         </div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <div class="stat-icon accuracy-icon">
-                            <i class="fas fa-crosshairs"></i>
-                        </div>
                         <div class="stat-info">
-                            <span class="stat-value">92%</span>
-                            <span class="stat-label">Accuracy</span>
+                            <span class="stat-value" id="highScore">--</span>
+                            <span class="stat-label">High Score</span>
                         </div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <div class="stat-icon games-icon">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
                         <div class="stat-info">
-                            <span class="stat-value">24</span>
+                            <span class="stat-value" id="totalGames">0</span>
                             <span class="stat-label">Games</span>
                         </div>
                     </div>
@@ -210,33 +66,14 @@
 
             <section class="section">
                 <div class="section-header">
-                    <h2 class="section-recent"><i class="fas fa-history"></i>Recent Sessions</h2>
-                    <a href="#" class="see-all">See all</a>
+                    <h2>Recent Games</h2>
+                    <a href="#" class="see-all" onclick="clearAllGames(); return false;">Clear</a>
                 </div>
-                <div class="session-item">
-                    <div class="session-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="session-info">
-                        <h4>Practice Session</h4>
-                        <p>Strike training - 45 min</p>
-                    </div>
-                    <div class="session-score">
-                        <span class="score">186</span>
-                        <span class="score-label">Score</span>
-                    </div>
-                </div>
-                <div class="session-item">
-                    <div class="session-icon blue">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="session-info">
-                        <h4>League Game</h4>
-                        <p>Team match - 1h 20min</p>
-                    </div>
-                    <div class="session-score">
-                        <span class="score">212</span>
-                        <span class="score-label">Score</span>
+                <div id="recentGames">
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-bowling-ball"></i>
+                        <p>No games recorded yet</p>
+                        <span>Tap + to add your first game</span>
                     </div>
                 </div>
             </section>
@@ -246,134 +83,153 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </button>
-                <button class="nav-item" onclick="showScreen('laserScreen')">
-                    <i class="fas fa-crosshairs"></i>
-                    <span>Guide</span>
+                <button class="nav-item" onclick="showScreen('historyScreen')">
+                    <i class="fas fa-list"></i>
+                    <span>History</span>
                 </button>
-                <button class="nav-item center-btn" onclick="showScreen('laserScreen')">
+                <button class="nav-item center-btn" onclick="showScreen('inputScreen')">
                     <div class="center-icon">
-                        <i class="fas fa-play"></i>
+                        <i class="fas fa-plus"></i>
                     </div>
                 </button>
-                <button class="nav-item">
+                <button class="nav-item" onclick="showScreen('statsScreen')">
                     <i class="fas fa-chart-bar"></i>
                     <span>Stats</span>
                 </button>
                 <button class="nav-item" onclick="showScreen('settingsScreen')">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
                 </button>
             </nav>
         </div>
 
-        <!-- Laser Guide Screen -->
-        <div class="screen laser-screen" id="laserScreen">
-            <header class="laser-header">
+        <!-- Score Input Screen -->
+        <div class="screen input-screen" id="inputScreen">
+            <header class="input-header">
                 <button class="back-btn" onclick="showScreen('mainScreen')">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <h1>Laser Guide</h1>
-                <button class="icon-btn">
-                    <i class="fas fa-ellipsis-v"></i>
+                <h1>Add Game</h1>
+                <button class="icon-btn" onclick="saveGame()">
+                    <i class="fas fa-check"></i>
                 </button>
             </header>
 
-            <div class="laser-view">
-                <div class="lane-visualization">
-                    <div class="lane-3d">
-                        <div class="lane-markers">
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                            <span class="marker"></span>
-                        </div>
-                        <div class="pins-3d">
-                            <div class="pin-row row-1">
-                                <div class="pin-3d"></div>
-                            </div>
-                            <div class="pin-row row-2">
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                            </div>
-                            <div class="pin-row row-3">
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                            </div>
-                            <div class="pin-row row-4">
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                                <div class="pin-3d"></div>
-                            </div>
-                        </div>
-                        <div class="laser-line"></div>
-                        <div class="target-point"></div>
-                        <div class="ball-position"></div>
-                    </div>
+            <div class="input-content">
+                <div class="input-section">
+                    <label class="input-label">Date</label>
+                    <input type="date" id="gameDate" class="input-field">
                 </div>
 
-                <div class="guide-info">
-                    <div class="info-badge">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Optimal angle detected</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="control-panel">
-                <div class="angle-display">
-                    <div class="angle-circle">
-                        <span class="angle-value">17.5°</span>
-                        <span class="angle-label">Entry Angle</span>
-                    </div>
+                <div class="input-section">
+                    <label class="input-label">Location</label>
+                    <input type="text" id="gameLocation" class="input-field" placeholder="Optional">
                 </div>
 
-                <div class="adjustment-controls">
-                    <div class="control-group">
-                        <label>Target Position</label>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="100" value="65" class="slider" id="positionSlider">
-                            <div class="slider-labels">
-                                <span>Left</span>
-                                <span>Right</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label>Curve Intensity</label>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="100" value="40" class="slider" id="curveSlider">
-                            <div class="slider-labels">
-                                <span>Straight</span>
-                                <span>Hook</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="input-section">
+                    <label class="input-label">Score</label>
+                    <input type="number" id="finalScore" class="input-field score-input" placeholder="0" min="0" max="300">
                 </div>
 
-                <div class="shot-types">
-                    <button class="shot-type active">
-                        <i class="fas fa-bullseye"></i>
-                        <span>Strike</span>
-                    </button>
-                    <button class="shot-type">
-                        <i class="fas fa-adjust"></i>
-                        <span>Spare</span>
-                    </button>
-                    <button class="shot-type">
-                        <i class="fas fa-random"></i>
-                        <span>Split</span>
-                    </button>
+                <div class="input-section">
+                    <label class="input-label">Strikes</label>
+                    <input type="number" id="strikes" class="input-field" placeholder="0" min="0" max="12">
                 </div>
 
-                <button class="btn-primary activate-btn">
-                    <i class="fas fa-power-off"></i>
-                    <span>Activate Laser</span>
+                <div class="input-section">
+                    <label class="input-label">Spares</label>
+                    <input type="number" id="spares" class="input-field" placeholder="0" min="0" max="10">
+                </div>
+
+                <div class="input-section">
+                    <label class="input-label">Notes</label>
+                    <textarea id="gameNotes" class="input-field textarea-field" placeholder="Optional"></textarea>
+                </div>
+
+                <button class="btn-primary save-btn" onclick="saveGame()">
+                    <span>Save Game</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- History Screen -->
+        <div class="screen history-screen" id="historyScreen">
+            <header class="history-header">
+                <button class="back-btn" onclick="showScreen('mainScreen')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>History</h1>
+                <div style="width: 40px;"></div>
+            </header>
+
+            <div class="history-content">
+                <div id="historyList"></div>
+            </div>
+        </div>
+
+        <!-- Stats Screen -->
+        <div class="screen stats-screen" id="statsScreen">
+            <header class="stats-header">
+                <button class="back-btn" onclick="showScreen('mainScreen')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>Statistics</h1>
+                <div style="width: 40px;"></div>
+            </header>
+
+            <div class="stats-content">
+                <div class="stats-overview">
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsAvg">--</span>
+                        <span class="overview-label">Average</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsHigh">--</span>
+                        <span class="overview-label">Highest</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsLow">--</span>
+                        <span class="overview-label">Lowest</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsStrikes">0</span>
+                        <span class="overview-label">Strikes</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsSpares">0</span>
+                        <span class="overview-label">Spares</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="statsGames">0</span>
+                        <span class="overview-label">Games</span>
+                    </div>
+                </div>
+
+                <div class="score-distribution">
+                    <h3>Score Distribution</h3>
+                    <div class="distribution-bars" id="distributionBars">
+                        <div class="dist-bar-group">
+                            <div class="dist-bar"><div class="dist-fill" id="dist0"></div></div>
+                            <span>0-100</span>
+                        </div>
+                        <div class="dist-bar-group">
+                            <div class="dist-bar"><div class="dist-fill" id="dist1"></div></div>
+                            <span>101-150</span>
+                        </div>
+                        <div class="dist-bar-group">
+                            <div class="dist-bar"><div class="dist-fill" id="dist2"></div></div>
+                            <span>151-200</span>
+                        </div>
+                        <div class="dist-bar-group">
+                            <div class="dist-bar"><div class="dist-fill" id="dist3"></div></div>
+                            <span>201-250</span>
+                        </div>
+                        <div class="dist-bar-group">
+                            <div class="dist-bar"><div class="dist-fill" id="dist4"></div></div>
+                            <span>251-300</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -388,106 +244,23 @@
             </header>
 
             <div class="settings-content">
-                <div class="profile-section">
-                    <div class="profile-avatar-large">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h2>John Bowler</h2>
-                    <p>Pro Level</p>
-                </div>
-
                 <div class="settings-group">
-                    <h3>Device</h3>
-                    <div class="setting-item">
-                        <div class="setting-icon blue">
-                            <i class="fab fa-bluetooth-b"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Bluetooth</span>
-                            <span class="setting-status">Connected</span>
-                        </div>
-                        <div class="toggle active">
-                            <div class="toggle-handle"></div>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-icon purple">
-                            <i class="fas fa-broadcast-tower"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Laser Intensity</span>
-                            <span class="setting-status">Medium</span>
-                        </div>
+                    <div class="setting-item" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        <span class="setting-name">Export Data</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
-                    <div class="setting-item">
-                        <div class="setting-icon green">
-                            <i class="fas fa-battery-three-quarters"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Device Battery</span>
-                            <span class="setting-status">85%</span>
-                        </div>
+                    <div class="setting-item" onclick="clearAllGames()">
+                        <i class="fas fa-trash"></i>
+                        <span class="setting-name">Clear All Data</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
 
                 <div class="settings-group">
-                    <h3>Preferences</h3>
                     <div class="setting-item">
-                        <div class="setting-icon orange">
-                            <i class="fas fa-hand-paper"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Dominant Hand</span>
-                            <span class="setting-status">Right</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-icon pink">
-                            <i class="fas fa-palette"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Laser Color</span>
-                            <span class="setting-status">Green</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-icon teal">
-                            <i class="fas fa-volume-up"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Sound Effects</span>
-                            <span class="setting-status">On</span>
-                        </div>
-                        <div class="toggle active">
-                            <div class="toggle-handle"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-group">
-                    <h3>Account</h3>
-                    <div class="setting-item">
-                        <div class="setting-icon gray">
-                            <i class="fas fa-cloud"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Sync Data</span>
-                            <span class="setting-status">Last synced: Today</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-icon red">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </div>
-                        <div class="setting-info">
-                            <span class="setting-name">Sign Out</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="fas fa-info-circle"></i>
+                        <span class="setting-name">Version 1.0.0</span>
                     </div>
                 </div>
             </div>
