@@ -1,7 +1,36 @@
 // TrueAxis Bowling - Score Tracker App
 
-// Game data storage
-let games = JSON.parse(localStorage.getItem('bowlingGames')) || [];
+const API_URL = 'http://localhost:3000/api';
+
+// Auth state
+let authToken = localStorage.getItem('authToken');
+let currentUser = null;
+let games = [];
+
+// API helper
+async function api(endpoint, options = {}) {
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+
+    if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || 'Request failed');
+    }
+
+    return data;
+}
 
 // Screen Navigation
 function showScreen(screenId) {
@@ -17,28 +46,22 @@ function showScreen(screenId) {
 
     // Update displays when showing certain screens
     if (screenId === 'mainScreen') {
-        updateMainStats();
-        displayRecentGames();
+        loadGames();
     } else if (screenId === 'inputScreen') {
         resetInputForm();
     } else if (screenId === 'historyScreen') {
         displayHistoryList();
     } else if (screenId === 'statsScreen') {
-        updateStatsScreen();
+        loadStats();
     }
 }
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
-    // Set default date to today
-    const dateInput = document.getElementById('gameDate');
-    if (dateInput) {
-        dateInput.valueAsDate = new Date();
+    // Check if logged in
+    if (authToken) {
+        checkAuth();
     }
-
-    // Load saved games and update displays
-    updateMainStats();
-    displayRecentGames();
 
     // Bottom navigation
     const navItems = document.querySelectorAll('.nav-item:not(.center-btn)');
@@ -48,13 +71,132 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('active');
         });
     });
-
-    // Initialize welcome animation
-    initWelcomeAnimation();
 });
 
+// Check if auth token is valid
+async function checkAuth() {
+    try {
+        currentUser = await api('/me');
+        updateUserDisplay();
+    } catch (error) {
+        logout();
+    }
+}
+
+// Update user display
+function updateUserDisplay() {
+    const usernameEl = document.getElementById('displayUsername');
+    if (usernameEl && currentUser) {
+        usernameEl.textContent = currentUser.username;
+    }
+}
+
+// Register
+async function register() {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const errorEl = document.getElementById('regError');
+
+    errorEl.textContent = '';
+
+    if (!username || !password) {
+        errorEl.textContent = 'Please fill in all fields';
+        return;
+    }
+
+    try {
+        const data = await api('/register', {
+            method: 'POST',
+            body: JSON.stringify({ username, password })
+        });
+
+        authToken = data.token;
+        currentUser = { id: data.userId, username: data.username };
+        localStorage.setItem('authToken', authToken);
+
+        updateUserDisplay();
+        showScreen('mainScreen');
+    } catch (error) {
+        errorEl.textContent = error.message;
+    }
+}
+
+// Login
+async function login() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+
+    errorEl.textContent = '';
+
+    if (!username || !password) {
+        errorEl.textContent = 'Please fill in all fields';
+        return;
+    }
+
+    try {
+        const data = await api('/login', {
+            method: 'POST',
+            body: JSON.stringify({ username, password })
+        });
+
+        authToken = data.token;
+        currentUser = { id: data.userId, username: data.username };
+        localStorage.setItem('authToken', authToken);
+
+        updateUserDisplay();
+        showScreen('mainScreen');
+    } catch (error) {
+        errorEl.textContent = error.message;
+    }
+}
+
+// Logout
+async function logout() {
+    try {
+        if (authToken) {
+            await api('/logout', { method: 'POST' });
+        }
+    } catch (error) {
+        // Ignore errors
+    }
+
+    authToken = null;
+    currentUser = null;
+    games = [];
+    localStorage.removeItem('authToken');
+    showScreen('welcomeScreen');
+}
+
+// Load games from API
+async function loadGames() {
+    try {
+        games = await api('/games');
+        updateMainStats();
+        displayRecentGames();
+    } catch (error) {
+        console.error('Failed to load games:', error);
+    }
+}
+
+// Load stats from API
+async function loadStats() {
+    try {
+        const stats = await api('/stats');
+        document.getElementById('statsAvg').textContent = stats.avgScore ?? '--';
+        document.getElementById('statsHigh').textContent = stats.highScore ?? '--';
+        document.getElementById('statsLow').textContent = stats.lowScore ?? '--';
+        document.getElementById('statsStrikes').textContent = stats.totalStrikes;
+        document.getElementById('statsSpares').textContent = stats.totalSpares;
+        document.getElementById('statsGames').textContent = stats.totalGames;
+        updateDistributionBars(stats.distribution);
+    } catch (error) {
+        console.error('Failed to load stats:', error);
+    }
+}
+
 // Save a new game
-function saveGame() {
+async function saveGame() {
     const dateInput = document.getElementById('gameDate');
     const locationInput = document.getElementById('gameLocation');
     const scoreInput = document.getElementById('finalScore');
@@ -64,26 +206,28 @@ function saveGame() {
 
     const score = parseInt(scoreInput.value);
 
-    // Validate score
     if (isNaN(score) || score < 0 || score > 300) {
         alert('Please enter a valid score between 0 and 300');
         return;
     }
 
-    const game = {
-        id: Date.now(),
-        date: dateInput.value || new Date().toISOString().split('T')[0],
-        location: locationInput.value.trim(),
-        score: score,
-        strikes: parseInt(strikesInput.value) || 0,
-        spares: parseInt(sparesInput.value) || 0,
-        notes: notesInput.value.trim()
-    };
+    try {
+        await api('/games', {
+            method: 'POST',
+            body: JSON.stringify({
+                date: dateInput.value || new Date().toISOString().split('T')[0],
+                location: locationInput.value.trim(),
+                score: score,
+                strikes: parseInt(strikesInput.value) || 0,
+                spares: parseInt(sparesInput.value) || 0,
+                notes: notesInput.value.trim()
+            })
+        });
 
-    games.unshift(game); // Add to beginning of array
-    saveGamesToStorage();
-
-    showScreen('mainScreen');
+        showScreen('mainScreen');
+    } catch (error) {
+        alert('Failed to save game: ' + error.message);
+    }
 }
 
 // Reset input form
@@ -97,11 +241,6 @@ function resetInputForm() {
     document.getElementById('strikes').value = '';
     document.getElementById('spares').value = '';
     document.getElementById('gameNotes').value = '';
-}
-
-// Save games to localStorage
-function saveGamesToStorage() {
-    localStorage.setItem('bowlingGames', JSON.stringify(games));
 }
 
 // Update main screen stats
@@ -129,7 +268,6 @@ function updateMainStats() {
 // Display recent games on main screen
 function displayRecentGames() {
     const container = document.getElementById('recentGames');
-    const emptyState = document.getElementById('emptyState');
 
     if (games.length === 0) {
         container.innerHTML = '';
@@ -137,7 +275,7 @@ function displayRecentGames() {
         return;
     }
 
-    const recentGames = games.slice(0, 5); // Show only 5 most recent
+    const recentGames = games.slice(0, 5);
     container.innerHTML = recentGames.map(game => createGameCard(game)).join('');
 }
 
@@ -145,11 +283,10 @@ function displayRecentGames() {
 function createEmptyState() {
     const div = document.createElement('div');
     div.className = 'empty-state';
-    div.id = 'emptyState';
     div.innerHTML = `
         <i class="fas fa-bowling-ball"></i>
         <p>No games recorded yet</p>
-        <span>Tap the + button to add your first game</span>
+        <span>Tap + to add your first game</span>
     `;
     return div;
 }
@@ -163,7 +300,7 @@ function createGameCard(game) {
     });
 
     return `
-        <div class="session-item" onclick="viewGameDetails(${game.id})">
+        <div class="session-item" onclick="viewGameDetails('${game.id}')">
             <div class="session-icon">
                 <i class="fas fa-bowling-ball"></i>
             </div>
@@ -197,46 +334,6 @@ function displayHistoryList() {
     container.innerHTML = games.map(game => createGameCard(game)).join('');
 }
 
-// Update stats screen
-function updateStatsScreen() {
-    if (games.length === 0) {
-        document.getElementById('statsAvg').textContent = '--';
-        document.getElementById('statsHigh').textContent = '--';
-        document.getElementById('statsLow').textContent = '--';
-        document.getElementById('statsStrikes').textContent = '0';
-        document.getElementById('statsSpares').textContent = '0';
-        document.getElementById('statsGames').textContent = '0';
-        updateDistributionBars([0, 0, 0, 0, 0]);
-        return;
-    }
-
-    const scores = games.map(g => g.score);
-    const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-    const high = Math.max(...scores);
-    const low = Math.min(...scores);
-    const totalStrikes = games.reduce((sum, g) => sum + g.strikes, 0);
-    const totalSpares = games.reduce((sum, g) => sum + g.spares, 0);
-
-    document.getElementById('statsAvg').textContent = avg;
-    document.getElementById('statsHigh').textContent = high;
-    document.getElementById('statsLow').textContent = low;
-    document.getElementById('statsStrikes').textContent = totalStrikes;
-    document.getElementById('statsSpares').textContent = totalSpares;
-    document.getElementById('statsGames').textContent = games.length;
-
-    // Calculate score distribution
-    const distribution = [0, 0, 0, 0, 0];
-    games.forEach(game => {
-        if (game.score <= 100) distribution[0]++;
-        else if (game.score <= 150) distribution[1]++;
-        else if (game.score <= 200) distribution[2]++;
-        else if (game.score <= 250) distribution[3]++;
-        else distribution[4]++;
-    });
-
-    updateDistributionBars(distribution);
-}
-
 // Update distribution bars
 function updateDistributionBars(distribution) {
     const maxCount = Math.max(...distribution, 1);
@@ -250,7 +347,7 @@ function updateDistributionBars(distribution) {
     }
 }
 
-// View game details (placeholder for future feature)
+// View game details
 function viewGameDetails(gameId) {
     const game = games.find(g => g.id === gameId);
     if (game) {
@@ -267,13 +364,16 @@ Notes: ${game.notes || 'None'}
 }
 
 // Clear all games
-function clearAllGames() {
+async function clearAllGames() {
     if (confirm('Are you sure you want to delete all game data? This cannot be undone.')) {
-        games = [];
-        saveGamesToStorage();
-        updateMainStats();
-        displayRecentGames();
-        showScreen('mainScreen');
+        try {
+            await api('/games', { method: 'DELETE' });
+            games = [];
+            updateMainStats();
+            displayRecentGames();
+        } catch (error) {
+            alert('Failed to clear games: ' + error.message);
+        }
     }
 }
 
@@ -290,19 +390,14 @@ function exportData() {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = `bowling-data-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `trueaxis-bowling-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-// Welcome screen animation
-function initWelcomeAnimation() {
-    // Logo animation handled by CSS
-}
-
-// Utility function for haptic feedback (for mobile devices)
+// Utility function for haptic feedback
 function triggerHaptic() {
     if ('vibrate' in navigator) {
         navigator.vibrate(10);
@@ -316,9 +411,12 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Export functions for external use
+// Export functions for global use
 window.showScreen = showScreen;
 window.saveGame = saveGame;
 window.clearAllGames = clearAllGames;
 window.exportData = exportData;
 window.viewGameDetails = viewGameDetails;
+window.login = login;
+window.register = register;
+window.logout = logout;

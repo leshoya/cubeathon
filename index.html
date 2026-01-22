@@ -20,10 +20,66 @@
                 </div>
                 <h1 class="welcome-title">TrueAxis Bowling</h1>
                 <p class="welcome-subtitle">Track your scores. Improve your game.</p>
-                <button class="btn-primary" onclick="showScreen('mainScreen')">
+                <button class="btn-primary" onclick="showScreen('loginScreen')">
                     <span>Get Started</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="screen auth-screen" id="loginScreen">
+            <div class="auth-content">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to continue</p>
+
+                <div class="auth-form">
+                    <div class="input-section">
+                        <label class="input-label">Username</label>
+                        <input type="text" id="loginUsername" class="input-field" placeholder="Enter username">
+                    </div>
+                    <div class="input-section">
+                        <label class="input-label">Password</label>
+                        <input type="password" id="loginPassword" class="input-field" placeholder="Enter password">
+                    </div>
+                    <div class="auth-error" id="loginError"></div>
+                    <button class="btn-primary auth-btn" onclick="login()">
+                        <span>Sign In</span>
+                    </button>
+                </div>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="#" onclick="showScreen('registerScreen'); return false;">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Screen -->
+        <div class="screen auth-screen" id="registerScreen">
+            <div class="auth-content">
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Sign up to get started</p>
+
+                <div class="auth-form">
+                    <div class="input-section">
+                        <label class="input-label">Username</label>
+                        <input type="text" id="regUsername" class="input-field" placeholder="Choose username">
+                    </div>
+                    <div class="input-section">
+                        <label class="input-label">Password</label>
+                        <input type="password" id="regPassword" class="input-field" placeholder="Choose password">
+                    </div>
+                    <div class="auth-error" id="regError"></div>
+                    <button class="btn-primary auth-btn" onclick="register()">
+                        <span>Create Account</span>
+                    </button>
+                </div>
+
+                <p class="auth-switch">
+                    Already have an account?
+                    <a href="#" onclick="showScreen('loginScreen'); return false;">Sign In</a>
+                </p>
             </div>
         </div>
 
@@ -244,6 +300,11 @@
             </header>
 
             <div class="settings-content">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="displayUsername">User</span>
+                </div>
+
                 <div class="settings-group">
                     <div class="setting-item" onclick="exportData()">
                         <i class="fas fa-download"></i>
@@ -253,6 +314,14 @@
                     <div class="setting-item" onclick="clearAllGames()">
                         <i class="fas fa-trash"></i>
                         <span class="setting-name">Clear All Data</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="setting-name">Sign Out</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
